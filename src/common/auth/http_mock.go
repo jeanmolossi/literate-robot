@@ -6,21 +6,30 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
+	commonerrors "github.com/jeanmolossi/literate-robot/src/common/errors/errors"
 	"github.com/jeanmolossi/literate-robot/src/common/server/httperr"
 )
 
-type User struct {
-	UUID  string
-	Email string
-	Role  string
+type (
+	User struct {
+		UUID  string
+		Email string
+		Role  string
 
-	DisplayName string
-}
+		DisplayName string
+	}
 
-type ctxKey int
+	ctxKey int
+)
 
 const (
 	userContextKey ctxKey = iota
+)
+
+var (
+	// if we expect that the user of the function may be interested with concrete error,
+	// it's a good idea to provide variable with this error
+	NoUserInContextError = commonerrors.NewAuthorizationError("no user in context", "no-user-found")
 )
 
 // HttpMockMiddleware is used in the local environment (which doesn't depend on Firebase)
@@ -55,4 +64,13 @@ func HttpMockMiddleware(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func UserFromCtx(ctx context.Context) (User, error) {
+	u, ok := ctx.Value(userContextKey).(User)
+	if ok {
+		return u, nil
+	}
+
+	return User{}, NoUserInContextError
 }
