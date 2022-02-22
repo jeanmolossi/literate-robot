@@ -6,7 +6,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
-	commonerrors "github.com/jeanmolossi/literate-robot/src/common/errors/errors"
+	commonerrors "github.com/jeanmolossi/literate-robot/src/common/errors"
 	"github.com/jeanmolossi/literate-robot/src/common/server/httperr"
 )
 
