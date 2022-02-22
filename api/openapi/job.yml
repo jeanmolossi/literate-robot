@@ -1,0 +1,88 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: POC jobs services
+  description: A simple POC
+  contact:
+    name: Jean Molossi
+servers:
+  - url: https://{hostname}/api
+    variables:
+      hostname:
+        default: localhost
+security:
+  - bearerAuth: []
+paths:
+  /jobs:
+    get:
+      operationId: getJobs
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jobs'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Job:
+      type: object
+      required: [id, role, title, description, status]
+      properties:
+        id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          example: Programador Backend
+        title:
+          type: string
+          example: Vaga para programador backend
+        description:
+          type: string
+          example: Uma descricao qualquer
+        status:
+          type: string
+          example: A
+        location:
+          type: string
+          example: Sao paulo
+        company:
+          type: integer
+          example: 149
+        salary:
+          type: string
+          example: "R$ 1.000,00"
+        createdAt:
+          type: string
+          format: date-time
+    Jobs:
+      type: object
+      required: [jobs]
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Job'
+    
+    Error:
+      type: object
+      required:
+        - slug
+        - message
+      properties:
+        slug:
+          type: string
+        message:
+          type: string
