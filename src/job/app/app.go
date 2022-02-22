@@ -1,5 +1,7 @@
 package app
 
+import "github.com/jeanmolossi/literate-robot/src/job/app/query"
+
 type (
 	Application struct {
 		Commands Commands
@@ -8,5 +10,7 @@ type (
 
 	Commands struct{}
 
-	Queries struct{}
+	Queries struct {
+		AllJobs query.AllJobsHandler
+	}
 )
