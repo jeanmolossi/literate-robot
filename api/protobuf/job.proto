@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package job;
+
+option go_package = "github.com/jeanmolossi/literate-robot/src/job";
+
+import "google/protobuf/timestamp.proto";
+
+service JobService {
+    rpc GetJob(GetJobRequest) returns (Job) {};
+}
+
+message GetJobRequest {
+    string id = 1;
+}
+
+
+message Job {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
+}
