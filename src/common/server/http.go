@@ -9,6 +9,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/jeanmolossi/literate-robot/src/common/auth"
+	"github.com/jeanmolossi/literate-robot/src/common/logs"
+	"github.com/sirupsen/logrus"
 )
 
 func RunHTTPServer(createHandler func(router chi.Router) http.Handler) {
@@ -28,7 +30,7 @@ func RunHTTPServerOnAddr(addr string, createHandler func(router chi.Router) http
 func setMiddlewares(router *chi.Mux) {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
-	// router.Use(logs.NewStructuredLogger(logrus.StandardLogger()))
+	router.Use(logs.NewStructuredLogger(logrus.StandardLogger()))
 	router.Use(middleware.Recoverer)
 
 	addCorsMiddleware(router)
