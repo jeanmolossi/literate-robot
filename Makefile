@@ -9,3 +9,7 @@ openapi_http:
 .PHONY: openapi_js
 openapi_js:
 	@./scripts/openapi-js.sh job
+
+.PHONY: proto
+proto:
+	@./scripts/gen-proto.sh job
