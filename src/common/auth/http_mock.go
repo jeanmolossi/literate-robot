@@ -12,11 +12,11 @@ import (
 
 type (
 	User struct {
-		UUID  string
+		Id    int
 		Email string
 		Role  string
 
-		DisplayName string
+		Username string
 	}
 
 	ctxKey int
@@ -55,10 +55,10 @@ func HttpMockMiddleware(next http.Handler) http.Handler {
 		}
 
 		ctx := context.WithValue(r.Context(), userContextKey, User{
-			UUID:        claims["user_uuid"].(string),
-			Email:       claims["email"].(string),
-			Role:        claims["role"].(string),
-			DisplayName: claims["name"].(string),
+			Id:       int(claims["user_id"].(float64)),
+			Email:    claims["email"].(string),
+			Role:     claims["role"].(string),
+			Username: claims["name"].(string),
 		})
 		r = r.WithContext(ctx)
 

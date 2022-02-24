@@ -2,61 +2,61 @@ package adapters
 
 import (
 	"context"
-	"time"
+	"database/sql"
 
-	"cloud.google.com/go/firestore"
 	"github.com/jeanmolossi/literate-robot/src/job/app/query"
+
+	"github.com/jeanmolossi/literate-robot/src/job/domain/job"
 )
 
-type JobRepository struct {
-	client *firestore.Client
+type dbJob struct {
+	ID          int
+	Title       string
+	Description string
+	Status      string
+	CityID      int
+	StateID     int
+	UserID      int
 }
 
-func NewJobRepository(client *firestore.Client) JobRepository {
+type JobRepository struct {
+	client *sql.DB
+}
+
+func NewJobRepository(client *sql.DB) JobRepository {
 	return JobRepository{client}
 }
 
 func (j JobRepository) AllJobs(ctx context.Context) ([]query.Job, error) {
-	createdAt := time.Now()
-
-	return []query.Job{
-		{
-			ID:          "1",
-			Description: "Job 1 description",
-			Status:      "pending",
-			Role:        "developer",
-			CreatedAt:   &createdAt,
-			Title:       "Job 1 title",
-			Location:    nullishString("Job 1 location"),
-			Company:     nullishInt(149),
-			Salary:      nullishString("Job 1 salary"),
-		},
-		{
-			ID:          "2",
-			Description: "Job 2 description",
-			Status:      "inspection",
-			Role:        "developer",
-			CreatedAt:   &createdAt,
-			Title:       "Job 2 title",
-			Location:    nullishString("Job 2 location"),
-			Company:     nullishInt(149),
-			Salary:      nullishString("Job 2 salary"),
-		},
-	}, nil
-}
-
-func nullishInt(i int) *int {
-	if i == 0 {
-		return nil
+	rows, err := j.client.QueryContext(ctx, "SELECT * FROM jobs")
+	if err != nil {
+		return nil, err
 	}
 
-	return &i
-}
+	var jobs []query.Job
+	for rows.Next() {
+		var bdJob dbJob
+		err := rows.Scan(&bdJob.ID, &bdJob.Title, &bdJob.Description, &bdJob.Status, &bdJob.CityID, &bdJob.StateID, &bdJob.UserID)
+		if err != nil {
+			return nil, err
+		}
 
-func nullishString(txt string) *string {
-	if txt == "" {
-		return nil
+		domainJob, err := job.NewJob(bdJob.ID, bdJob.Title, bdJob.Description, bdJob.Status, bdJob.UserID, bdJob.CityID, bdJob.StateID)
+		if err != nil {
+			return nil, err
+		}
+
+		jobs = append(jobs, j.domainJobToQueryJob(domainJob))
 	}
 
-	return &txt
+	return jobs, nil
+}
+
+func (j JobRepository) domainJobToQueryJob(dJob *job.Job) query.Job {
+	return query.Job{
+		ID:          dJob.JobID(),
+		Title:       dJob.JobTitle(),
+		Description: dJob.JobDescription(),
+		Status:      dJob.JobStatus(),
+	}
 }

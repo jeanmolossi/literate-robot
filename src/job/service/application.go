@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"database/sql"
 
-	"cloud.google.com/go/firestore"
+	_ "github.com/go-sql-driver/mysql"
+
 	grpcClient "github.com/jeanmolossi/literate-robot/src/common/client"
 	"github.com/jeanmolossi/literate-robot/src/job/adapters"
 	"github.com/jeanmolossi/literate-robot/src/job/app"
@@ -25,12 +27,16 @@ func NewApplication(ctx context.Context) (app.Application, func()) {
 }
 
 func newApplication(ctx context.Context, jobGrpc command.JobService) app.Application {
-	client, err := firestore.NewClient(ctx, "literate-robot")
+	db, err := sql.Open("mysql", "root:root@tcp(jobs-db:3306)/jobs")
 	if err != nil {
 		panic(err)
 	}
 
-	jobRepository := adapters.NewJobRepository(client)
+	db.SetConnMaxLifetime(0)
+	db.SetMaxOpenConns(50)
+	db.SetMaxIdleConns(50)
+
+	jobRepository := adapters.NewJobRepository(db)
 
 	return app.Application{
 		Commands: app.Commands{},

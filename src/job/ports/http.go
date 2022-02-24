@@ -1,6 +1,7 @@
 package ports
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -50,13 +51,11 @@ func appJobsToResponse(appJobs []query.Job) []Job {
 
 	for i, appJob := range appJobs {
 		jobs[i] = Job{
-			Id:          appJob.ID,
+			Id:          fmt.Sprintf("%d", appJob.ID),
 			Title:       appJob.Title,
 			Description: appJob.Description,
-			Location:    appJob.Location,
-			Company:     appJob.Company,
-			Salary:      appJob.Salary,
-			CreatedAt:   appJob.CreatedAt,
+			Status:      appJob.Status,
+			Role:        "recruiter",
 		}
 	}
 

@@ -2,9 +2,7 @@ package ports
 
 import (
 	"context"
-	"time"
 
-	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/jeanmolossi/literate-robot/src/common/genproto/job"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -29,12 +27,11 @@ func (g GrpcServer) GetJob(ctx context.Context, jobRequest *job.GetJobRequest) (
 	jobId := jobRequest.GetId()
 	grpcJob := &job.Job{}
 	for _, job := range jobs {
-		if job.ID == jobId {
-			grpcJob.Id = job.ID
-			grpcJob.Name = job.Title
+		if job.ID == int(jobId) {
+			grpcJob.JobId = int32(job.ID)
+			grpcJob.Title = job.Title
 			grpcJob.Description = job.Description
-			grpcJob.CreatedAt = &timestamp.Timestamp{Seconds: job.CreatedAt.Unix()}
-			grpcJob.UpdatedAt = &timestamp.Timestamp{Seconds: time.Now().Unix()}
+			grpcJob.Status = job.Status
 		}
 	}
 
