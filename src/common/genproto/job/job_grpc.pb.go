@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,6 +20,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JobServiceClient interface {
 	GetJob(ctx context.Context, in *GetJobRequest, opts ...grpc.CallOption) (*Job, error)
+	ActivateJob(ctx context.Context, in *ActivateJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeactivateJob(ctx context.Context, in *DeactivateJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type jobServiceClient struct {
@@ -38,11 +41,31 @@ func (c *jobServiceClient) GetJob(ctx context.Context, in *GetJobRequest, opts .
 	return out, nil
 }
 
+func (c *jobServiceClient) ActivateJob(ctx context.Context, in *ActivateJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/job.JobService/ActivateJob", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobServiceClient) DeactivateJob(ctx context.Context, in *DeactivateJobRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/job.JobService/DeactivateJob", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JobServiceServer is the server API for JobService service.
 // All implementations should embed UnimplementedJobServiceServer
 // for forward compatibility
 type JobServiceServer interface {
 	GetJob(context.Context, *GetJobRequest) (*Job, error)
+	ActivateJob(context.Context, *ActivateJobRequest) (*emptypb.Empty, error)
+	DeactivateJob(context.Context, *DeactivateJobRequest) (*emptypb.Empty, error)
 }
 
 // UnimplementedJobServiceServer should be embedded to have forward compatible implementations.
@@ -51,6 +74,12 @@ type UnimplementedJobServiceServer struct {
 
 func (UnimplementedJobServiceServer) GetJob(context.Context, *GetJobRequest) (*Job, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetJob not implemented")
+}
+func (UnimplementedJobServiceServer) ActivateJob(context.Context, *ActivateJobRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ActivateJob not implemented")
+}
+func (UnimplementedJobServiceServer) DeactivateJob(context.Context, *DeactivateJobRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeactivateJob not implemented")
 }
 
 // UnsafeJobServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -82,6 +111,42 @@ func _JobService_GetJob_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobService_ActivateJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActivateJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobServiceServer).ActivateJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/job.JobService/ActivateJob",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobServiceServer).ActivateJob(ctx, req.(*ActivateJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobService_DeactivateJob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeactivateJobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobServiceServer).DeactivateJob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/job.JobService/DeactivateJob",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobServiceServer).DeactivateJob(ctx, req.(*DeactivateJobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // JobService_ServiceDesc is the grpc.ServiceDesc for JobService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -92,6 +157,14 @@ var JobService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetJob",
 			Handler:    _JobService_GetJob_Handler,
+		},
+		{
+			MethodName: "ActivateJob",
+			Handler:    _JobService_ActivateJob_Handler,
+		},
+		{
+			MethodName: "DeactivateJob",
+			Handler:    _JobService_DeactivateJob_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

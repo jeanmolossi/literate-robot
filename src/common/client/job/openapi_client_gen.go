@@ -11,6 +11,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/deepmap/oapi-codegen/pkg/runtime"
 )
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
@@ -88,10 +90,55 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 type ClientInterface interface {
 	// GetJobs request
 	GetJobs(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetJob request
+	GetJob(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ActivateJob request
+	ActivateJob(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeactivateJob request
+	DeactivateJob(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetJobs(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetJobsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetJob(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetJobRequest(c.Server, jobID)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ActivateJob(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewActivateJobRequest(c.Server, jobID)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeactivateJob(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeactivateJobRequest(c.Server, jobID)
 	if err != nil {
 		return nil, err
 	}
@@ -122,6 +169,108 @@ func NewGetJobsRequest(server string) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetJobRequest generates requests for GetJob
+func NewGetJobRequest(server string, jobID int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "jobID", runtime.ParamLocationPath, jobID)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/jobs/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewActivateJobRequest generates requests for ActivateJob
+func NewActivateJobRequest(server string, jobID int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "jobID", runtime.ParamLocationPath, jobID)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/jobs/%s/activate", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewDeactivateJobRequest generates requests for DeactivateJob
+func NewDeactivateJobRequest(server string, jobID int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "jobID", runtime.ParamLocationPath, jobID)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/jobs/%s/deactivate", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -174,6 +323,15 @@ func WithBaseURL(baseURL string) ClientOption {
 type ClientWithResponsesInterface interface {
 	// GetJobs request
 	GetJobsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetJobsResponse, error)
+
+	// GetJob request
+	GetJobWithResponse(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*GetJobResponse, error)
+
+	// ActivateJob request
+	ActivateJobWithResponse(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*ActivateJobResponse, error)
+
+	// DeactivateJob request
+	DeactivateJobWithResponse(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*DeactivateJobResponse, error)
 }
 
 type GetJobsResponse struct {
@@ -199,6 +357,75 @@ func (r GetJobsResponse) StatusCode() int {
 	return 0
 }
 
+type GetJobResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Job
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetJobResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetJobResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ActivateJobResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Job
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r ActivateJobResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ActivateJobResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeactivateJobResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Job
+	JSONDefault  *Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeactivateJobResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeactivateJobResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // GetJobsWithResponse request returning *GetJobsResponse
 func (c *ClientWithResponses) GetJobsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetJobsResponse, error) {
 	rsp, err := c.GetJobs(ctx, reqEditors...)
@@ -206,6 +433,33 @@ func (c *ClientWithResponses) GetJobsWithResponse(ctx context.Context, reqEditor
 		return nil, err
 	}
 	return ParseGetJobsResponse(rsp)
+}
+
+// GetJobWithResponse request returning *GetJobResponse
+func (c *ClientWithResponses) GetJobWithResponse(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*GetJobResponse, error) {
+	rsp, err := c.GetJob(ctx, jobID, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetJobResponse(rsp)
+}
+
+// ActivateJobWithResponse request returning *ActivateJobResponse
+func (c *ClientWithResponses) ActivateJobWithResponse(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*ActivateJobResponse, error) {
+	rsp, err := c.ActivateJob(ctx, jobID, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseActivateJobResponse(rsp)
+}
+
+// DeactivateJobWithResponse request returning *DeactivateJobResponse
+func (c *ClientWithResponses) DeactivateJobWithResponse(ctx context.Context, jobID int, reqEditors ...RequestEditorFn) (*DeactivateJobResponse, error) {
+	rsp, err := c.DeactivateJob(ctx, jobID, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeactivateJobResponse(rsp)
 }
 
 // ParseGetJobsResponse parses an HTTP response from a GetJobsWithResponse call
@@ -224,6 +478,105 @@ func ParseGetJobsResponse(rsp *http.Response) (*GetJobsResponse, error) {
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Jobs
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetJobResponse parses an HTTP response from a GetJobWithResponse call
+func ParseGetJobResponse(rsp *http.Response) (*GetJobResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetJobResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Job
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseActivateJobResponse parses an HTTP response from a ActivateJobWithResponse call
+func ParseActivateJobResponse(rsp *http.Response) (*ActivateJobResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ActivateJobResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Job
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeactivateJobResponse parses an HTTP response from a DeactivateJobWithResponse call
+func ParseDeactivateJobResponse(rsp *http.Response) (*DeactivateJobResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeactivateJobResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Job
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
