@@ -29,6 +29,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /jobs/{jobID}:
+    get:
+      operationId: getJob
+      parameters:
+        - in: path
+          name: jobID
+          schema:
+            type: integer
+          required: true
+          description: todo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /jobs/{jobID}/activate:
+    put:
+      operationId: activateJob
+      parameters:
+        - in: path
+          name: jobID
+          schema:
+            type: integer
+          required: true
+          description: todo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /jobs/{jobID}/deactivate:
+    put:
+      operationId: deactivateJob
+      parameters:
+        - in: path
+          name: jobID
+          schema:
+            type: integer
+          required: true
+          description: todo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerAuth:
