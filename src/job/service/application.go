@@ -32,16 +32,21 @@ func newApplication(ctx context.Context, jobGrpc command.JobService) app.Applica
 		panic(err)
 	}
 
-	db.SetConnMaxLifetime(0)
+	db.SetConnMaxLifetime(10)
 	db.SetMaxOpenConns(50)
 	db.SetMaxIdleConns(50)
+	db.SetConnMaxIdleTime(5)
 
 	jobRepository := adapters.NewJobRepository(db)
 
 	return app.Application{
-		Commands: app.Commands{},
+		Commands: app.Commands{
+			ActivateJob:   command.NewActivateJobHandler(jobRepository, jobGrpc),
+			DeactivateJob: command.NewDeactivateJobHandler(jobRepository, jobGrpc),
+		},
 		Queries: app.Queries{
 			AllJobs: query.NewAllJobsHandler(jobRepository),
+			GetJob:  query.NewGetJobHandler(jobRepository),
 		},
 	}
 

@@ -17,3 +17,11 @@ func NewJobGrpc(client job.JobServiceClient) JobGrpc {
 func (j JobGrpc) GetJob(ctx context.Context, id string) error {
 	return nil
 }
+
+func (j JobGrpc) ActivateJob(ctx context.Context, jobID int) error {
+	return nil
+}
+
+func (j JobGrpc) DeactivateJob(ctx context.Context, jobID int) error {
+	return nil
+}

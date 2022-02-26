@@ -3,5 +3,6 @@ package command
 import "context"
 
 type JobService interface {
-	GetJob(ctx context.Context, id string) error
+	ActivateJob(ctx context.Context, jobID int) error
+	DeactivateJob(ctx context.Context, jobID int) error
 }

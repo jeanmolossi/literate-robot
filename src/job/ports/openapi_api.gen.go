@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -16,6 +17,15 @@ type ServerInterface interface {
 
 	// (GET /jobs)
 	GetJobs(w http.ResponseWriter, r *http.Request)
+
+	// (GET /jobs/{jobID})
+	GetJob(w http.ResponseWriter, r *http.Request, jobID int)
+
+	// (PUT /jobs/{jobID}/activate)
+	ActivateJob(w http.ResponseWriter, r *http.Request, jobID int)
+
+	// (PUT /jobs/{jobID}/deactivate)
+	DeactivateJob(w http.ResponseWriter, r *http.Request, jobID int)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -35,6 +45,90 @@ func (siw *ServerInterfaceWrapper) GetJobs(w http.ResponseWriter, r *http.Reques
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetJobs(w, r)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// GetJob operation middleware
+func (siw *ServerInterfaceWrapper) GetJob(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "jobID" -------------
+	var jobID int
+
+	err = runtime.BindStyledParameter("simple", false, "jobID", chi.URLParam(r, "jobID"), &jobID)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "jobID", Err: err})
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetJob(w, r, jobID)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// ActivateJob operation middleware
+func (siw *ServerInterfaceWrapper) ActivateJob(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "jobID" -------------
+	var jobID int
+
+	err = runtime.BindStyledParameter("simple", false, "jobID", chi.URLParam(r, "jobID"), &jobID)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "jobID", Err: err})
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ActivateJob(w, r, jobID)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// DeactivateJob operation middleware
+func (siw *ServerInterfaceWrapper) DeactivateJob(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "jobID" -------------
+	var jobID int
+
+	err = runtime.BindStyledParameter("simple", false, "jobID", chi.URLParam(r, "jobID"), &jobID)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "jobID", Err: err})
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeactivateJob(w, r, jobID)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -159,6 +253,15 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/jobs", wrapper.GetJobs)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/jobs/{jobID}", wrapper.GetJob)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/jobs/{jobID}/activate", wrapper.ActivateJob)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/jobs/{jobID}/deactivate", wrapper.DeactivateJob)
 	})
 
 	return r

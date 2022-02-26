@@ -1,12 +1,16 @@
 package query
 
-import "context"
+import (
+	"context"
+
+	"github.com/jeanmolossi/literate-robot/src/job/domain/job"
+)
 
 type AllJobsHandler struct {
-	readModel AllJobsReadModel
+	readModel job.Repository
 }
 
-func NewAllJobsHandler(readModel AllJobsReadModel) AllJobsHandler {
+func NewAllJobsHandler(readModel job.Repository) AllJobsHandler {
 	if readModel == nil {
 		panic("nil read model")
 	}
@@ -14,10 +18,21 @@ func NewAllJobsHandler(readModel AllJobsReadModel) AllJobsHandler {
 	return AllJobsHandler{readModel}
 }
 
-type AllJobsReadModel interface {
-	AllJobs(ctx context.Context) ([]Job, error)
+func (h AllJobsHandler) Handle(ctx context.Context) (jobs []Job, err error) {
+	return h.UnmarshalJobFromDatabase(h.readModel.GetAllJobs(ctx))
 }
 
-func (h AllJobsHandler) Handle(ctx context.Context) (jobs []Job, err error) {
-	return h.readModel.AllJobs(ctx)
+func (h AllJobsHandler) UnmarshalJobFromDatabase(j []job.Job, err error) ([]Job, error) {
+	jobs := make([]Job, len(j))
+
+	for i, j := range j {
+		jobs[i] = Job{
+			ID:          j.JobID(),
+			Title:       j.JobTitle(),
+			Description: j.JobDescription(),
+			Status:      j.JobStatus(),
+		}
+	}
+
+	return jobs, err
 }

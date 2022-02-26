@@ -79,3 +79,15 @@ func (j Job) JobCityID() int {
 func (j Job) JobStateID() int {
 	return j.state_id
 }
+
+func (j Job) IsActive() bool {
+	return j.status == "A"
+}
+
+func (j *Job) Activate() {
+	j.status = "A"
+}
+
+func (j *Job) Deactivate() {
+	j.status = "I"
+}

@@ -3,6 +3,7 @@ package ports
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/jeanmolossi/literate-robot/src/common/genproto/job"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -36,4 +37,22 @@ func (g GrpcServer) GetJob(ctx context.Context, jobRequest *job.GetJobRequest) (
 	}
 
 	return grpcJob, nil
+}
+
+func (g GrpcServer) ActivateJob(ctx context.Context, jobID *job.ActivateJobRequest) (*empty.Empty, error) {
+	err := g.app.Commands.ActivateJob.Handle(ctx, int(jobID.GetId()))
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (g GrpcServer) DeactivateJob(ctx context.Context, jobID *job.DeactivateJobRequest) (*empty.Empty, error) {
+	err := g.app.Commands.DeactivateJob.Handle(ctx, int(jobID.GetId()))
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &empty.Empty{}, nil
 }
