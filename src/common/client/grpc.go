@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/jeanmolossi/literate-robot/src/common/genproto/job"
+	"github.com/jeanmolossi/literate-robot/src/common/genproto/job_location"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -30,6 +31,25 @@ func NewJobClient() (client job.JobServiceClient, close func() error, err error)
 	}
 
 	return job.NewJobServiceClient(conn), conn.Close, nil
+}
+
+func NewJobLocationClient() (client job_location.JobLocationServiceClient, close func() error, err error) {
+	grpcAddr := os.Getenv("JOB_LOCATION_GRPC_ADDR")
+	if grpcAddr == "" {
+		return nil, func() error { return nil }, errors.New("empty env JOB_GRPC_ADDR")
+	}
+
+	opts, err := grpcDialOpts(grpcAddr)
+	if err != nil {
+		return nil, func() error { return nil }, err
+	}
+
+	conn, err := grpc.Dial(grpcAddr, opts...)
+	if err != nil {
+		return nil, func() error { return nil }, err
+	}
+
+	return job_location.NewJobLocationServiceClient(conn), conn.Close, nil
 }
 
 func grpcDialOpts(grpcAddr string) ([]grpc.DialOption, error) {
