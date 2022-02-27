@@ -1,17 +1,5 @@
 version: '3'
 services:
-  web:
-    build:
-      context: .docker/web
-      dockerfile: Dockerfile
-    working_dir: /web
-    volumes:
-      - ./web:/web
-      - /web/node_modules/
-    ports:
-      - "8080:8080"
-    networks:
-      - jobnet
 
   job-http:
     build:
@@ -20,7 +8,7 @@ services:
       - ./src:/src
     working_dir: /src/job
     ports:
-      - "127.0.0.1:3000:$PORT"
+      - "127.0.0.1:3000:3000"
     env_file:
       - .env
     environment:
@@ -34,8 +22,19 @@ services:
     volumes:
       - ./src:/src
     working_dir: /src/job
-    ports:
-      - "127.0.0.1:3001:$PORT"
+    env_file:
+      - .env
+    environment:
+      SERVER_TO_RUN: grpc
+    networks:
+      - jobnet
+
+  job-location-grpc:
+    build:
+      context: .docker/app
+    volumes:
+      - ./src:/src
+    working_dir: /src/job-location
     env_file:
       - .env
     environment:
