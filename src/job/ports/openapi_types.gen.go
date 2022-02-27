@@ -19,13 +19,14 @@ type Error struct {
 
 // Job defines model for Job.
 type Job struct {
+	City        *string    `json:"city,omitempty"`
 	Company     *int       `json:"company,omitempty"`
 	CreatedAt   *time.Time `json:"createdAt,omitempty"`
 	Description string     `json:"description"`
 	Id          string     `json:"id"`
-	Location    *string    `json:"location,omitempty"`
 	Role        string     `json:"role"`
 	Salary      *string    `json:"salary,omitempty"`
+	State       *string    `json:"state,omitempty"`
 	Status      string     `json:"status"`
 	Title       string     `json:"title"`
 }

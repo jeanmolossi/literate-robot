@@ -116,6 +116,8 @@ func appJobToResponse(job query.Job) Job {
 		Description: job.Description,
 		Status:      job.Status,
 		Role:        "recruiter",
+		City:        &job.City,
+		State:       &job.State,
 	}
 }
 

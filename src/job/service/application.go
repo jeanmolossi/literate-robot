@@ -18,15 +18,21 @@ func NewApplication(ctx context.Context) (app.Application, func()) {
 	if err != nil {
 		panic(err)
 	}
+	jobLocationClient, closeJobLocationClient, err := grpcClient.NewJobLocationClient()
+	if err != nil {
+		panic(err)
+	}
 
 	jobGrpc := adapters.NewJobGrpc(jobClient)
+	jobLocationGrpc := adapters.NewJobLocationGrpc(jobLocationClient)
 
-	return newApplication(ctx, jobGrpc), func() {
+	return newApplication(ctx, jobGrpc, jobLocationGrpc), func() {
 		_ = closeJobClient()
+		_ = closeJobLocationClient()
 	}
 }
 
-func newApplication(ctx context.Context, jobGrpc command.JobService) app.Application {
+func newApplication(ctx context.Context, jobGrpc command.JobService, jobLocationGrpc query.JobLocationService) app.Application {
 	db, err := sql.Open("mysql", "root:root@tcp(jobs-db:3306)/jobs")
 	if err != nil {
 		panic(err)
@@ -45,8 +51,8 @@ func newApplication(ctx context.Context, jobGrpc command.JobService) app.Applica
 			DeactivateJob: command.NewDeactivateJobHandler(jobRepository, jobGrpc),
 		},
 		Queries: app.Queries{
-			AllJobs: query.NewAllJobsHandler(jobRepository),
-			GetJob:  query.NewGetJobHandler(jobRepository),
+			AllJobs: query.NewAllJobsHandler(jobRepository, jobLocationGrpc),
+			GetJob:  query.NewGetJobHandler(jobRepository, jobLocationGrpc),
 		},
 	}
 
