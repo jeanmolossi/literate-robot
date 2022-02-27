@@ -13,3 +13,4 @@ openapi_js:
 .PHONY: proto
 proto:
 	@./scripts/gen-proto.sh job
+	@./scripts/gen-proto.sh job_location

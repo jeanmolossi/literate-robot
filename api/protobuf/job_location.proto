@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package job_location;
+
+option go_package = "github.com/jeanmolossi/literate-robot/src/job_location";
+
+service JobLocationService {
+    rpc GetJobCity (GetJobCityRequest) returns (GetJobCityResponse) {}
+    rpc GetJobState (GetJobStateRequest) returns (GetJobStateResponse) {}
+    rpc GetJobLocations (GetJobLocationsRequest) returns (GetJobLocationsResponse) {}
+}
+
+message GetJobCityRequest {
+    int32 city_id = 1;
+}
+
+message GetJobStateRequest {
+    int32 state_id = 1;
+}
+
+message GetJobLocationsRequest {
+    repeated int32 job_ids = 1;
+}
+
+message GetJobCityResponse {
+    int32 city_id = 1;
+    string city = 2;
+}
+
+message GetJobStateResponse {
+    int32 state_id = 1;
+    string state = 2;
+}
+
+message SingleJobLocationResponse {
+    int32 job_id = 1;
+    int32 city_id = 2;
+    string city = 3;
+    int32 state_id = 4;
+    string state = 5;
+}
+
+message GetJobLocationsResponse {
+    repeated SingleJobLocationResponse job_locations = 1;
+}

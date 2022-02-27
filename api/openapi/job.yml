@@ -124,7 +124,10 @@ components:
         status:
           type: string
           example: A
-        location:
+        city:
+          type: string
+          example: Sao paulo
+        state:
           type: string
           example: Sao paulo
         company:
