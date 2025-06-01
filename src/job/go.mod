@@ -9,7 +9,8 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/render v1.0.1
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/jeanmolossi/literate-robot/src/common v0.0.0-00010101000000-000000000000
+	github.com/golang/protobuf v1.5.2
+	github.com/jeanmolossi/literate-robot/src/common v0.0.0-20220227040830-fe22d236bfa8
 	google.golang.org/grpc v1.44.0
 )
 
@@ -18,7 +19,6 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-chi/chi v1.5.4 // indirect
 	github.com/go-chi/cors v1.2.0 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
