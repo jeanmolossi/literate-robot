@@ -6,7 +6,7 @@ replace github.com/jeanmolossi/literate-robot/src/common => ../common
 
 require (
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/jeanmolossi/literate-robot/src/common v0.0.0-00010101000000-000000000000
+	github.com/jeanmolossi/literate-robot/src/common v0.0.0-20220227040830-fe22d236bfa8
 	google.golang.org/grpc v1.44.0
 )
 
