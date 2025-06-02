@@ -6,7 +6,7 @@ replace github.com/jeanmolossi/literate-robot/src/common => ../common/
 
 require (
 	github.com/deepmap/oapi-codegen v1.16.3
-	github.com/go-chi/chi/v5 v5.0.10
+	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-chi/render v1.0.3
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang/protobuf v1.5.4
