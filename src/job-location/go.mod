@@ -1,24 +1,28 @@
 module github.com/jeanmolossi/literate-robot/src/job_location
 
-go 1.17
+go 1.21.0
+
+toolchain go1.24.3
 
 replace github.com/jeanmolossi/literate-robot/src/common => ../common
 
 require (
-	github.com/go-sql-driver/mysql v1.6.0
+	github.com/go-sql-driver/mysql v1.9.2
 	github.com/jeanmolossi/literate-robot/src/common v0.0.0-20250601192046-f5923bb108c6
 	google.golang.org/grpc v1.44.0
 )
 
 require (
 	cloud.google.com/go v0.34.0 // indirect
+	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/ajg/form v1.5.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-chi/chi v1.5.5 // indirect
 	github.com/go-chi/chi/v5 v5.0.10 // indirect
-	github.com/go-chi/cors v1.2.0 // indirect
-	github.com/go-chi/render v1.0.1 // indirect
+	github.com/go-chi/cors v1.2.1 // indirect
+	github.com/go-chi/render v1.0.3 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
+	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
