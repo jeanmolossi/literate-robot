@@ -1,6 +1,8 @@
 module github.com/jeanmolossi/literate-robot/src/job
 
-go 1.17
+go 1.21.0
+
+toolchain go1.24.3
 
 replace github.com/jeanmolossi/literate-robot/src/common => ../common/
 
@@ -8,7 +10,7 @@ require (
 	github.com/deepmap/oapi-codegen v1.16.3
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-chi/render v1.0.3
-	github.com/go-sql-driver/mysql v1.6.0
+	github.com/go-sql-driver/mysql v1.9.2
 	github.com/golang/protobuf v1.5.4
 	github.com/jeanmolossi/literate-robot/src/common v0.0.0-20250601192046-f5923bb108c6
 	google.golang.org/grpc v1.44.0
@@ -16,6 +18,7 @@ require (
 
 require (
 	cloud.google.com/go/compute v1.3.0 // indirect
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/CloudyKit/fastprinter v0.0.0-20200109182630-33d98a066a53 // indirect
 	github.com/CloudyKit/jet/v6 v6.2.0 // indirect
