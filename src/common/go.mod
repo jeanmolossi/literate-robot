@@ -15,7 +15,7 @@ require (
 	github.com/go-chi/render v1.0.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.9.3
 	github.com/x-cray/logrus-prefixed-formatter v0.5.2
 	google.golang.org/grpc v1.72.0
 	google.golang.org/protobuf v1.36.6
@@ -96,4 +96,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace google.golang.org/grpc => github.com/grpc/grpc-go v1.44.0
+replace google.golang.org/grpc => github.com/grpc/grpc-go v1.72.2
