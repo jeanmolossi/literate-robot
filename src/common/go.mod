@@ -7,7 +7,7 @@ toolchain go1.24.3
 require (
 	cloud.google.com/go v0.121.2
 	cloud.google.com/go/compute/metadata v0.6.0
-	github.com/deepmap/oapi-codegen v1.16.3
+	github.com/deepmap/oapi-codegen/v2 v2.4.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.2.1
