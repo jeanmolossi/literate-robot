@@ -96,4 +96,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace google.golang.org/grpc => github.com/grpc/grpc-go v1.72.2
+replace google.golang.org/grpc => github.com/grpc/grpc-go v1.73.0
